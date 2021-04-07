@@ -10,7 +10,7 @@ def home(request):
 	if request.method =='POST':
 		category = request.POST['category']
 		print(category)
-		prod = Product.objects.filter(name__contains = category)
+		prod = Product.objects.filter(category__contains = category) | Product.objects.filter(name__contains = category) | Product.objects.filter(model__contains = category)
 		order =list(Order.objects.filter(user= request.user.username, order_placed = False))
 		ordered_prod = [i.product for i in order]
 		
