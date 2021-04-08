@@ -19,9 +19,11 @@ class User_info(models.Model):
 	state = models.CharField(default="", max_length=50)
 	pincode = models.CharField(default="", max_length=10)
 	phone = PhoneField(blank=True, help_text='Contact phone number')
+	order_placed_on = models.DateField(blank = True, null=True)
+	
 
 	def __str__(self):
-		return f'{self.id} {self.user.username} '
+		return f'{self.id} {self.user.username} on {self.order_placed_on}'
     	
     
 
@@ -38,10 +40,10 @@ class Order(models.Model):
 	item_bill = models.IntegerField(default=0)
 	order_placed = models.BooleanField(default = False)
 	shipping_info = models.ForeignKey(User_info, on_delete=models.CASCADE, blank=True, null= True)
-	
+	order_placed_on = models.DateField(blank = True, null =True)
 
 	def __str__(self):
-		return f'{self.user} - {self.product} '
+		return f'{self.user} - {self.product} on {self.order_placed_on} '
 
 
 

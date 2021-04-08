@@ -6,6 +6,8 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+import datetime
+from django.contrib.auth.views import LogoutView
 
 def register(request):
 	if request.method == 'POST':
@@ -26,7 +28,7 @@ def profile(request):
 	total_bill = 0
 	order =list(Order.objects.filter(user= request.user.username, order_placed = False))
 	bill = [int(i.item_bill) for i in order ]
-	
+	#print(datetime.date.today())
 	context = { "prod": prod, "total_bill": sum(bill) }
 	return render(request, 'users/profile.html', context)
 
@@ -55,9 +57,9 @@ def UserInfo(request):
 			pincode = form.cleaned_data.get('pincode')
 			phone = form.cleaned_data.get('phone')
 
-			newinfo = User_info(user = request.user, address1 = address1, address2 = address2, country = country, state = state, pincode= pincode, phone = phone )
+			newinfo = User_info(user = request.user, address1 = address1, address2 = address2, country = country, state = state, pincode= pincode, phone = phone , order_placed_on =datetime.date.today() )
 			newinfo.save()
-			Order.objects.filter(user = request.user.username, order_placed = False).update(order_placed = True, shipping_info = newinfo )
+			Order.objects.filter(user = request.user.username, order_placed = False).update(order_placed = True, shipping_info = newinfo, order_placed_on = datetime.date.today() )
 
 			subject = " BuyIt : Order Placed "
 			message = " An order has been placed from your account. If it was you click on the link below."
@@ -80,4 +82,9 @@ def UserInfo(request):
 		}
 		return render(request, "users/userinfo.html", context)
 
-
+@login_required
+class UserLogoutView(LogoutView):
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            messages.error(request, "You have successfully logged out.")
+        return super().dispatch(request, *args, **kwargs)

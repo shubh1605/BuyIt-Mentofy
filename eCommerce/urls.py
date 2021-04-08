@@ -36,3 +36,5 @@ urlpatterns = [
 ]
 if settings.DEBUG:
     urlpatterns  =urlpatterns+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+#path('logout/', user_views.UserLogoutView.as_view(), name='logout'),
